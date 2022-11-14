@@ -14,22 +14,21 @@ class GamesController < ApplicationController
     serialized = URI.open("https://wagon-dictionary.herokuapp.com/#{@word}").read
     @hash_dico = JSON.parse(serialized)
     if @hash_dico['found'] && word_fit_in_array(@word, @letters)
-      @result = "<strong>Congratulations!</strong> <%= #{@word.upcase} %> is a valid English word!"
-    elsif !@hash_dico['found']
-      @result = "Sorry but <strong><%= #{@word.upcase} %></strong> does not seem to be a valid English word..."
+      @result = "Congratulations! #{@word.upcase} is a valid English word!"
+    elsif @hash_dico['found']
+      @result = "Sorry but #{@word.upcase} can't be built out of #{@letters.split.join(', ')}"
     else
-      @result = "Sorry but <strong><%= #{@word.upcase} %></strong> can't be built out of <%= #{@letters} %>"
+      @result = "Sorry but #{@word.upcase} does not seem to be a valid English word..."
     end
   end
 
   private
 
   def word_fit_in_array(string, array)
-    string_arr = string.chars.map
-    arr = array.map
+    string_arr = string.chars
     string_arr.each do |let|
-      if arr.include?(let)
-        arr.delete_at(arr.index(let))
+      if array.include?(let)
+        array.delete_at(array.index(let))
       else
         return false
       end
